@@ -3,6 +3,9 @@ let idx = -1;
 let row_data = [];
 let traffic = [];
 
+const CAR_WIDTH = 40;
+const CAR_HEIGHT = 80;
+
 fetch('development_data.json')
 .then(response => response.json())
 .then(data => {
@@ -16,7 +19,7 @@ fetch('development_data.json')
 
 
 const carCanvas = document.getElementById("carCanvas");
-carCanvas.width = 200;
+carCanvas.width = 400;
 const networkCanvas = document.getElementById("networkCanvas");
 networkCanvas.width = 300;
 
@@ -32,7 +35,7 @@ if (localStorage.getItem("bestBrain")) {
   for (let i = 0; i < cars.length; i++) {
     cars[i].brain = JSON.parse(localStorage.getItem("bestBrain"));
     if (i != 0) {
-      NeuralNetwork.mutate(cars[i].brain, 0.05);
+      NeuralNetwork.mutate(cars[i].brain, 0.1);
     }
   }
 }
@@ -51,10 +54,10 @@ function getLaneConverter(lane) {
 function getTraffic(state) {
   traffic = [];
   traffic.push(
-    new Car(road.getLaneCenter(0), -(Math.abs(state.FirstObjectDistance_Y % MOD)), 30, 50, "DUMMY", 3, getRandomColor()),
-    new Car(road.getLaneCenter(1), -(Math.abs(state.SecondObjectDistance_Y % MOD)), 30, 50, "PERSON", 2, "white"),
-    new Car(road.getLaneCenter(2), -(Math.abs(state.ThirdObjectDistance_Y % MOD)), 30, 50, "DUMMY", 2, getRandomColor()),
-    new Car(road.getLaneCenter(2), -(Math.abs(state.FourthObjectDistance_Y % MOD)), 30, 50, "DUMMY", 2, getRandomColor()),
+    new Car(road.getLaneCenter(0), -(Math.abs(state.FirstObjectDistance_Y % MOD)), CAR_WIDTH, CAR_HEIGHT, "DUMMY", 3, getRandomColor()),
+    new Car(road.getLaneCenter(1), -(Math.abs(state.SecondObjectDistance_Y % MOD)), CAR_WIDTH, 70, "PERSON", 2, "white"),
+    new Car(road.getLaneCenter(2), -(Math.abs(state.ThirdObjectDistance_Y % MOD)), CAR_WIDTH, CAR_HEIGHT, "DUMMY", 2, getRandomColor()),
+    new Car(road.getLaneCenter(2), -(Math.abs(state.FourthObjectDistance_Y % MOD)), CAR_WIDTH, CAR_HEIGHT, "DUMMY", 2, getRandomColor()),
   )
   return traffic;
 }
@@ -82,7 +85,7 @@ function discard() {
 function generateCars(N) {
   const cars = [];
   for (let i = 1; i <= N; i++) {
-    cars.push(new Car(road.getLaneCenter(1), -200, 30, 50, "AI"));
+    cars.push(new Car(road.getLaneCenter(1), 200, 40, 80, "AI"));
   }
   return cars;
 }
@@ -96,7 +99,8 @@ function processData(row_data) {
 
 function animate(time) {
   if (idx == -1) {
-    idx = 40; //+(prompt("Enter the state number"));
+    // idx = 40;
+    idx = 1;
     const current_state = row_data[idx];
     traffic = getTraffic(current_state);
     console.log(traffic);
